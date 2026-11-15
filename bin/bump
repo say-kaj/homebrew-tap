@@ -1,0 +1,15 @@
+#!/bin/sh
+# Point a cask at the latest GitHub release of its repo.
+# Usage: bin/bump <cask-name>        (e.g. bin/bump mycommander)
+set -eu
+cd "$(dirname "$0")/.."
+CASK="Casks/$1.rb"
+REPO=$(sed -n 's|.*homepage "https://github.com/\(.*\)".*|\1|p' "$CASK")
+TAG=$(gh release view --repo "$REPO" --json tagName -q .tagName)
+NEW=${TAG#v}
+OLD=$(sed -n 's/^ *version "\(.*\)"/\1/p' "$CASK")
+[ "$NEW" = "$OLD" ] && { echo "$1 already at $OLD"; exit 0; }
+SHA=$(gh release view "$TAG" --repo "$REPO" --json assets -q '.assets[]|select(.name|endswith("arm64.zip"))|.digest' | sed 's/^sha256://')
+sed -i '' -e "s/^\( *version \).*/\1\"$NEW\"/" -e "s/^\( *sha256 \).*/\1\"$SHA\"/" "$CASK"
+echo "$1: $OLD -> $NEW"
+git add "$CASK" && git commit -q -m "$1 $NEW" && git push -q
