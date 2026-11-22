@@ -1,6 +1,6 @@
 cask "mycommander" do
-  version "1.4.0"
-  sha256 "ae4f0d361385179c5c8c2c70b2e18f9bbbc7cea23783d8ec063a9e9642fa7f0b"
+  version "1.4.1"
+  sha256 "99cd82f5620bc06137405fc0a73e73b3c17c210cef344d104b0b427ee6f1eb8a"
 
   url "https://github.com/say-kaj/MyCommander/releases/download/v#{version}/myCommander-#{version}-macos-arm64.zip"
   name "myCommander"
